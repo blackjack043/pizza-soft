@@ -1,0 +1,232 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Pizza API",
+      "version": "1.0.0",
+      "description": "API для управления заказами в пиццерии."
+    },
+    "servers": [
+      {
+        "url": "http://localhost",
+        "description": "Local server"
+      }
+    ],
+    "paths": {
+      "/orders": {
+        "get": {
+          "summary": "Список заказов",
+          "parameters": [
+            {
+              "name": "done",
+              "in": "query",
+              "description": "Фильтр по статусу выполнения заказа (true/false)",
+              "required": false,
+              "schema": {
+                "type": "boolean"
+              }
+            },
+            {
+              "name": "X-Auth-Key",
+              "in": "header",
+              "description": "Ключ авторизации",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Список заказов",
+              "content": {
+                "application/json": {
+                  "example": [
+                    {
+                      "id": 1,
+                      "items": ["Pizza Margherita", "Coca Cola"],
+                      "done": false
+                    }
+                  ]
+                }
+              }
+            },
+            "403": {
+              "description": "Доступ запрещен"
+            },
+            "404": {
+              "description": "Заказы не найдены"
+            }
+          }
+        },
+        "post": {
+          "summary": "Создать заказ",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["items"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Заказ успешно создан",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "orderId": 123,
+                    "items": ["pizza", "cola"],
+                    "done": false
+                    
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Неверные данные заказа"
+            }
+          }
+        }
+      },
+      "/orders/{orderId}": {
+        "get": {
+          "summary": "Получить информацию о заказе",
+          "parameters": [
+            {
+              "name": "orderId",
+              "in": "path",
+              "description": "ID заказа",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Информация о заказе",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "id": 1,
+                    "items": ["Pizza Margherita", "Coca Cola"],
+                    "done": false
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Заказ не найден"
+            }
+          }
+        }
+      },
+      "/orders/{orderId}/items": {
+        "post": {
+          "summary": "Добавить позиции в заказ",
+          "parameters": [
+            {
+              "name": "orderId",
+              "in": "path",
+              "description": "ID заказа",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["items"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Позиции успешно добавлены",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "orderId": 1,
+                    "items": ["Pizza Margherita", "Coca Cola"],
+                    "done": false
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Заказ не найден"
+            }
+          }
+        }
+      },
+      "/orders/{orderId}/done": {
+        "post": {
+          "summary": "Завершить заказ",
+          "parameters": [
+            {
+              "name": "orderId",
+              "in": "path",
+              "description": "ID заказа",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            },
+            {
+              "name": "X-Auth-Key",
+              "in": "header",
+              "description": "Ключ авторизации",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Заказ успешно завершен",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "message": "Order updated successfully"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Доступ запрещен"
+            },
+            "404": {
+              "description": "Заказ не найден"
+            }
+          }
+        }
+      }
+    }
+  }
+  
