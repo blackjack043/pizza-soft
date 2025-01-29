@@ -8,11 +8,6 @@ header('Content-Type: application/json');
 // Уникальный ключ авторизации
 define('AUTH_KEY', 'qwerty123');
 
-// Получение метода и пути
-$method = $_SERVER['REQUEST_METHOD'];
-$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$path[0] = preg_replace('/\?.*$/', '', $path[0]);
-
 $router = new AltoRouter();
 
 $router->map('GET', '/orders',  function() {
