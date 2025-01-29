@@ -1,5 +1,6 @@
 <?php
 
+require 'AltoRouter.php';
 // Заготовка для простого REST API для управления пиццерией
 
 header('Content-Type: application/json');
@@ -12,48 +13,39 @@ $method = $_SERVER['REQUEST_METHOD'];
 $path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 $path[0] = preg_replace('/\?.*$/', '', $path[0]);
 
-// Основной роутинг
-switch ($path[0]) {
-    case 'orders':
-        handleOrders($method, $path);
-        break;
-    default:
-        http_response_code(404);
-        echo json_encode(['error' => 'Not Found']);
-        break;
+$router = new AltoRouter();
+
+$router->map('GET', '/orders',  function() {
+    listOrders();
+});
+
+$router->map('GET', '/orders/[i:id]', function($id) {
+    getOrder($id);
+});
+
+$router->map('POST', '/orders', function() {
+    createOrder();
+});
+
+$router->map('POST', '/orders/[i:id]/items', function($id) {
+    addItemsToOrder($id);
+});
+
+$router->map('POST', '/orders/[i:id]/done', function($id) {
+    markOrderAsDone($id);
+});
+
+
+$match = $router->match();
+
+if ($match) {
+    call_user_func_array($match['target'], $match['params']);
+} else {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
+    echo json_encode(["error" => "Not Found"]);
 }
+die();
 
-function handleOrders($method, $path) {
-    switch ($method) {
-        case 'POST':
-            if (count($path) === 1) {
-                createOrder();
-            } elseif (count($path) === 3 && $path[2] === 'items') {
-                addItemsToOrder($path[1]);
-            } elseif (count($path) === 3 && $path[2] === 'done') {
-                markOrderAsDone($path[1]);
-            } else {
-                http_response_code(400);
-                echo json_encode(['error' => 'Invalid Request']);
-            }
-            break;
-
-        case 'GET':
-            if (count($path) === 2) {
-                getOrder($path[1]);
-            } elseif (count($path) === 1) {
-                listOrders();
-            } else {
-                http_response_code(400);
-                echo json_encode(['error' => 'Invalid Request']);
-            }
-            break;
-
-        default:
-            http_response_code(405);
-            echo json_encode(['error' => 'Method Not Allowed']);
-    }
-}
 
 function createOrder() {
     $data = json_decode(file_get_contents('php://input'), true);
