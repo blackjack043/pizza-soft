@@ -4,6 +4,8 @@ services:
   php:
     build: .
     container_name: php-server
+    env_file:
+      - .env
     ports:
       - "8080:80"
     volumes:
