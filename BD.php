@@ -3,10 +3,10 @@ class DataBase {
     private $conn;
 
     private function connect() {
-        $host = getenv('DB_HOST') ?: 'mysql-db';
-        $username = getenv('DB_USER') ?: 'root';
-        $password = getenv('DB_PASSWORD') ?: 'root';
-        $dbname = getenv('DB_NAME') ?: 'pizza';
+        $host = 'mysql-db';
+        $username = 'root';
+        $password = 'root';
+        $dbname = 'pizza';
     
         $conn = new mysqli($host, $username, $password, $dbname);
     
