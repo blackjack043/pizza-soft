@@ -21,7 +21,7 @@ class OrderController {
     function createOrder() {
         $data = $this->HttpRequest->getJsonBody();
 
-        if (!$this->validate->validateIncomeData($data)) {
+        if (empty($data['items']) || !is_array($data['items']) || !$this->validate->validateIncomeData($data)) {
             $this->HttpResponse->sendJson(['error' => 'Invalid items'], 400);
         }
 
@@ -46,7 +46,7 @@ class OrderController {
     function addItemsToOrder($orderId) {
         $data = $this->HttpRequest->getJsonBody();
         
-        if (!$this->validate->validateIncomeData($data)) {
+        if (empty($data['items']) || !is_array($data['items']) || !$this->validate->validateIncomeData($data)) {
             $this->HttpResponse->sendJson(['error' => 'Invalid items'], 400);
         }
 
